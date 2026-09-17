@@ -7,7 +7,11 @@ const modelAltitude = 0;
 
 // ROTAZIONE: Imposta l'angolo in gradi
 const degrees = 95; 
-const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
+const modelRotate = [
+    0, 
+    Math.PI / 2, 
+    degreesZ * (Math.PI / 180)
+];
 
 // Converti coordinate per MapLibre
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
