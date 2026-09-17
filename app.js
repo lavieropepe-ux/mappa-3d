@@ -53,7 +53,7 @@ const customLayer = {
         // Caricamento e correzione orientamento Mesh
         const loader = new GLTFLoader();
         loader.load(
-            './models/SMarzano_3ds.glb',
+            './models/SMarzano_3ds.glb', // Verificare maiuscole/minuscole dei file su GitHub Pages
             (gltf) => {
                 const model = gltf.scene;
                 
@@ -61,8 +61,19 @@ const customLayer = {
                 model.rotation.y = Math.PI / 2; 
 
                 this.scene.add(model);
+
+                // Forza il ridisegno della mappa appena il download del file 3D è completato
+                if (this.map) {
+                    this.map.triggerRepaint();
+                }
             },
-            undefined,
+            (xhr) => {
+                // Monitoraggio percentuale di caricamento in console
+                if (xhr.lengthComputable) {
+                    const percentComplete = (xhr.loaded / xhr.total) * 100;
+                    console.log(`Caricamento modello 3D: ${Math.round(percentComplete)}%`);
+                }
+            },
             (error) => {
                 console.error('Errore nel caricamento del file GLB:', error);
             }
