@@ -5,8 +5,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const modelOrigin = [17.48585, 40.47512]; 
 const modelAltitude = 0;
 
-// 2. ROTAZIONE MAPPA (Gradi per l'allineamento bussola)
-const degrees = 270; 
+// 2. ROTAZIONE MAPPA (Regola questo valore per far combaciare il modello con la sagoma)
+const degrees = 0; 
 const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
 
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
@@ -50,25 +50,21 @@ const customLayer = {
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         this.scene.add(ambientLight);
 
-        // Caricamento e correzione orientamento Mesh
+        // Caricamento del modello senza trasformazioni interne di rotazione
         const loader = new GLTFLoader();
         loader.load(
-            './models/SMarzano_3ds.glb', // Verificare maiuscole/minuscole dei file su GitHub Pages
+            './models/SMarzano_3ds.glb',
             (gltf) => {
                 const model = gltf.scene;
                 
-                // Corregge l'inclinazione da Z-up a Y-up
-                model.rotation.x = Math.PI / 2; 
-
+                // Nessuna rotazione interna: viene gestita completamente da modelTransform
                 this.scene.add(model);
 
-                // Forza il ridisegno della mappa appena il download del file 3D è completato
                 if (this.map) {
                     this.map.triggerRepaint();
                 }
             },
             (xhr) => {
-                // Monitoraggio percentuale di caricamento in console
                 if (xhr.lengthComputable) {
                     const percentComplete = (xhr.loaded / xhr.total) * 100;
                     console.log(`Caricamento modello 3D: ${Math.round(percentComplete)}%`);
