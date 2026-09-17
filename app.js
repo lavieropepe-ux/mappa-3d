@@ -6,8 +6,8 @@ const modelOrigin = [17.48515, 40.47525];
 const modelAltitude = 0;
 
 // 2. Rotazione finale (portata a 95° per perfezionare l'inclinazione lungo l'asse)
-const degrees = 95;
-const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
+const degrees = 0;
+const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 0)];
 
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
     modelOrigin,
