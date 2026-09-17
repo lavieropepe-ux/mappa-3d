@@ -6,7 +6,7 @@ const modelOrigin = [17.48585, 40.47512];
 const modelAltitude = 0;
 
 // 2. ROTAZIONE MAPPA (Regola questo valore per far combaciare il modello con la sagoma)
-const degrees = 0; 
+const degrees = 45; 
 const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
 
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
