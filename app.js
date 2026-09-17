@@ -1,14 +1,15 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// 1. Coordinate di posizionamento [Longitudine, Latitudine]
+// COORDINATE: [Longitudine, Latitudine] -> San Marzano di San Giuseppe
 const modelOrigin = [17.48515, 40.47525]; 
 const modelAltitude = 0;
 
-// 2. Rotazione del modello (Modifica 'degrees' per ruotare l'edificio)
+// ROTAZIONE: Imposta l'angolo in gradi
 const degrees = 95; 
 const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
 
+// Converti coordinate per MapLibre
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
     modelOrigin,
     modelAltitude
@@ -24,17 +25,17 @@ const modelTransform = {
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
-// 3. Inizializzazione della Mappa
+// Inizializzazione della mappa
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-    center: modelOrigin,
+    center: [17.48515, 40.47525], // Centrato esplicitamente su San Marzano
     zoom: 18.5,
     pitch: 60,
     bearing: -17
 });
 
-// 4. Custom Layer per Three.js
+// Layer 3D Three.js
 const customLayer = {
     id: '3d-model',
     type: 'custom',
@@ -51,7 +52,7 @@ const customLayer = {
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         this.scene.add(ambientLight);
 
-        // Caricamento modello 3D
+        // Caricamento Modello GLB
         const loader = new GLTFLoader();
         loader.load(
             './models/SMarzano_3ds.glb',
@@ -60,7 +61,7 @@ const customLayer = {
             },
             undefined,
             (error) => {
-                console.error('Errore nel caricamento del file SMarzano_3ds.glb:', error);
+                console.error('Errore nel caricamento del file GLB:', error);
             }
         );
         this.map = map;
@@ -111,17 +112,16 @@ const customLayer = {
     }
 };
 
-// Carica il layer 3D sulla mappa
 map.on('style.load', () => {
     map.addLayer(customLayer);
 });
 
-// Tracciamento delle coordinate al passaggio del mouse
+// Evento movimento mouse per leggere le coordinate
 map.on('mousemove', (e) => {
     const lng = e.lngLat.lng.toFixed(6);
     const lat = e.lngLat.lat.toFixed(6);
-    const infoElem = document.getElementById('info');
-    if (infoElem) {
-        infoElem.innerHTML = `Longitudine: <b>${lng}</b> | Latitudine: <b>${lat}</b>`;
+    const info = document.getElementById('info');
+    if (info) {
+        info.innerHTML = `Longitudine: <b>${lng}</b> | Latitudine: <b>${lat}</b>`;
     }
 });
