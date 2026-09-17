@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// Coordinate di posizionamento del modello (Longitudine, Latitudine per San Marzano di San Giuseppe)
-const modelOrigin = [17.485687, 40.474791]; 
+// 1. Nuove coordinate (spostato più a Nord-Est sulla sagoma)
+const modelOrigin = [17.48595, 40.47515]; 
 const modelAltitude = 0;
-const modelRotate = [Math.PI / 2, 0, 85];
+
+// 2. Rotazione corretta in radianti (85 gradi)
+const degrees = 85;
+const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
 
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
     modelOrigin,
@@ -21,12 +24,12 @@ const modelTransform = {
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
-// Inizializza la mappa
+// Inizializza la mappa centrata esattamente sul nuovo punto
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-    center: modelOrigin,
-    zoom: 17,
+    center: modelOrigin, // La telecamera va subito sulle nuove coordinate
+    zoom: 18.5,
     pitch: 60,
     bearing: -17
 });
