@@ -5,9 +5,10 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const modelOrigin = [17.48585, 40.47512]; 
 const modelAltitude = 0;
 
-// 2. ROTAZIONE MAPPA (Regola questo valore per far combaciare il modello con la sagoma)
-const degrees = 45; 
-const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
+// 2. ANGOLO DI ROTAZIONE ORIZZONTALE (Modifica questo valore per allineare il modello alla sagoma)
+const degreesY = 90; 
+
+const modelRotate = [Math.PI / 2, 0, 0];
 
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
     modelOrigin,
@@ -50,14 +51,16 @@ const customLayer = {
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         this.scene.add(ambientLight);
 
-        // Caricamento del modello senza trasformazioni interne di rotazione
+        // Caricamento e rotazione sull'asse verticale (Y)
         const loader = new GLTFLoader();
         loader.load(
             './models/SMarzano_3ds.glb',
             (gltf) => {
                 const model = gltf.scene;
                 
-                // Nessuna rotazione interna: viene gestita completamente da modelTransform
+                // Ruota il modello intorno al suo asse verticale primario (Y)
+                model.rotation.y = degreesY * (Math.PI / 180); 
+
                 this.scene.add(model);
 
                 if (this.map) {
