@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // Coordinate di posizionamento del modello (Longitudine, Latitudine per San Marzano di San Giuseppe)
-const modelOrigin = [17.5028, 40.4556]; 
+const modelOrigin = [17.4856, 40.4748]; 
 const modelAltitude = 0;
 const modelRotate = [Math.PI / 2, 0, 0];
 
