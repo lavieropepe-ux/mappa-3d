@@ -57,8 +57,8 @@ const customLayer = {
             (gltf) => {
                 const model = gltf.scene;
                 
-               
-                model.rotation.y = Math.PI / 2; 
+                // Corregge l'inclinazione da Z-up a Y-up
+                model.rotation.x = Math.PI / 2; 
 
                 this.scene.add(model);
 
