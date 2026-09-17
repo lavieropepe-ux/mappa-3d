@@ -1,13 +1,9 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// COORDINATE: [Longitudine, Latitudine] -> San Marzano di San Giuseppe
-const modelOrigin = [17.48515, 40.47525]; 
+// 1. COORDINATE PERFETTAMENTE CENTRATE SULLA SAGOMA GRIGIA [Longitudine, Latitudine]
+const modelOrigin = [17.48590, 40.47510]; 
 const modelAltitude = 0;
-
-// ROTAZIONE: Imposta l'angolo in gradi
-const degrees = 95; 
-const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
 
 // Converti coordinate per MapLibre
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
@@ -15,13 +11,14 @@ const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
     modelAltitude
 );
 
+// Manteniamo la trasformazione MapLibre standard (senza rotazioni complesse qui)
 const modelTransform = {
     translateX: modelAsMercatorCoordinate.x,
     translateY: modelAsMercatorCoordinate.y,
     translateZ: modelAsMercatorCoordinate.z,
-    rotateX: modelRotate[0],
-    rotateY: modelRotate[1],
-    rotateZ: modelRotate[2],
+    rotateX: Math.PI / 2,
+    rotateY: 0,
+    rotateZ: 0,
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
@@ -29,7 +26,7 @@ const modelTransform = {
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-    center: [17.48515, 40.47525], // Centrato esplicitamente su San Marzano
+    center: modelOrigin,
     zoom: 18.5,
     pitch: 60,
     bearing: -17
@@ -57,7 +54,17 @@ const customLayer = {
         loader.load(
             './models/SMarzano_3ds.glb',
             (gltf) => {
-                this.scene.add(gltf.scene);
+                const model = gltf.scene;
+
+                // --- ROTAZIONE DIRETTA DEL MODELLO 3D ---
+                // Ruota di 90° attorno all'asse Y per metterlo in piedi/orizzontale
+                model.rotation.y = Math.PI / 2; // (90 gradi)
+
+                // Regola questo valore per allinearlo alla sagoma sulla mappa (in gradi)
+                const angolodibussola = 10; 
+                model.rotation.z = angolodibussola * (Math.PI / 180);
+
+                this.scene.add(model);
             },
             undefined,
             (error) => {
@@ -78,14 +85,6 @@ const customLayer = {
             new THREE.Vector3(1, 0, 0),
             modelTransform.rotateX
         );
-        const rotationY = new THREE.Matrix4().makeRotationAxis(
-            new THREE.Vector3(0, 1, 0),
-            modelTransform.rotateY
-        );
-        const rotationZ = new THREE.Matrix4().makeRotationAxis(
-            new THREE.Vector3(0, 0, 1),
-            modelTransform.rotateZ
-        );
 
         const m = new THREE.Matrix4().fromArray(matrix);
         const l = new THREE.Matrix4()
@@ -101,9 +100,7 @@ const customLayer = {
                     modelTransform.scale
                 )
             )
-            .multiply(rotationX)
-            .multiply(rotationY)
-            .multiply(rotationZ);
+            .multiply(rotationX);
 
         this.camera.projectionMatrix = m.multiply(l);
         this.renderer.resetState();
@@ -116,7 +113,7 @@ map.on('style.load', () => {
     map.addLayer(customLayer);
 });
 
-// Evento movimento mouse per leggere le coordinate
+// Evento movimento mouse per le coordinate
 map.on('mousemove', (e) => {
     const lng = e.lngLat.lng.toFixed(6);
     const lat = e.lngLat.lat.toFixed(6);
