@@ -3,7 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // COORDINATE: [Longitudine, Latitudine] -> San Marzano di San Giuseppe
 const modelOrigin = [17.48515, 40.47525]; 
-const modelAltitude = 10;
+const modelAltitude = 0;
 
 // ROTAZIONE: Imposta l'angolo in gradi
 const degrees = 95; 
