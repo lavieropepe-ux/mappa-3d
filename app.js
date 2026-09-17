@@ -97,7 +97,7 @@ const customLayer = {
             modelTransform.rotateY
         );
         const rotationZ = new THREE.Matrix4().makeRotationAxis(
-            new THREE.Vector3(0, 0, 1),
+            new THREE.Vector3(0, 1, 0),
             modelTransform.rotateZ
         );
 
