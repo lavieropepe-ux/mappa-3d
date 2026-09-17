@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// 1. Nuove coordinate (spostato più a Nord-Est sulla sagoma)
-const modelOrigin = [17.48595, 40.47515]; 
+// 1. Spostamento a Ovest (Longitudine diminuita) e leggermente a Nord (Latitudine aumentata)
+const modelOrigin = [17.48515, 40.47525]; 
 const modelAltitude = 0;
 
-// 2. Rotazione corretta in radianti (85 gradi)
-const degrees = 85;
+// 2. Rotazione finale (portata a 95° per perfezionare l'inclinazione lungo l'asse)
+const degrees = 95;
 const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
 
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
