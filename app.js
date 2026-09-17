@@ -89,15 +89,15 @@ const customLayer = {
     },
     render: function (gl, matrix) {
         const rotationX = new THREE.Matrix4().makeRotationAxis(
-            new THREE.Vector3(0, 1, 0),
+            new THREE.Vector3(1, 0, 0),
             modelTransform.rotateX
         );
         const rotationY = new THREE.Matrix4().makeRotationAxis(
-            new THREE.Vector3(0, 1, 1),
+            new THREE.Vector3(0, 1, 0),
             modelTransform.rotateY
         );
         const rotationZ = new THREE.Matrix4().makeRotationAxis(
-            new THREE.Vector3(0, 1, 0),
+            new THREE.Vector3(0, 0, 1),
             modelTransform.rotateZ
         );
 
