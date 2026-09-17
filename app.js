@@ -24,7 +24,7 @@ const THREE = window.THREE;
 // Inizializza la mappa
 const map = new maplibregl.Map({
     container: 'map',
-    style: 'https://demotiles.maplibre.org/style.json', // Stile mappa vettoriale open
+    style: https://basemaps.cartocdn.com/gl/positron-gl-style/style.json', // URL aggiornato e compatibile CORS
     center: modelOrigin,
     zoom: 17,
     pitch: 60, // Inclinazione per vista 3D
