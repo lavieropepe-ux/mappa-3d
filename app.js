@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // Coordinate dove posizionare il modello (Longitudine, Latitudine)
-const modelOrigin = [16.87193, 41.12527]; // Bari
+const modelOrigin = [17.48515, 40.47525]; 
 const modelAltitude = 0;
 const modelRotate = [Math.PI / 2, 0, 0];
 
