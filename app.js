@@ -1,13 +1,10 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// 1. Posizione del modello
-const modelOrigin = [17.48515, 40.47525]; 
+// Coordinate precise San Marzano di San Giuseppe (Longitudine, Latitudine)
+const modelOrigin = [17.5028, 40.4556]; 
 const modelAltitude = 0;
-
-// 2. Rotazione in gradi (Modifica questo valore per ruotare l'edificio)
-const degrees = 95; 
-const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)]; // Corretta la divisione per 180
+const modelRotate = [Math.PI / 2, 0, 0];
 
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
     modelOrigin,
@@ -24,12 +21,12 @@ const modelTransform = {
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
-// Inizializza la mappa
+// Inizializza mappa con Zoom 18.5 (molto vicino)
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
     center: modelOrigin,
-    zoom: 18.5,
+    zoom: 18.5, 
     pitch: 60,
     bearing: -17
 });
@@ -42,22 +39,26 @@ const customLayer = {
         this.camera = new THREE.Camera();
         this.scene = new THREE.Scene();
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        // Luci forte intensità per evitare che il modello appaia nero
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
         directionalLight.position.set(0, -70, 100).normalize();
         this.scene.add(directionalLight);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 2);
         this.scene.add(ambientLight);
 
         const loader = new GLTFLoader();
         loader.load(
             './models/SMarzano_3ds.glb',
             (gltf) => {
-                this.scene.add(gltf.scene);
+                const model = gltf.scene;
+                // Aumentiamo la scala del modello nel caso sia stato esportato piccolo
+                model.scale.set(10, 10, 10); 
+                this.scene.add(model);
             },
             undefined,
             (error) => {
-                console.error('Errore caricamento modello:', error);
+                console.error('Errore nel caricamento del file SMarzano_3ds.glb:', error);
             }
         );
         this.map = map;
@@ -110,14 +111,4 @@ const customLayer = {
 
 map.on('style.load', () => {
     map.addLayer(customLayer);
-});
-
-// Tracciamento coordinate al movimento del mouse
-map.on('mousemove', (e) => {
-    const lng = e.lngLat.lng.toFixed(6);
-    const lat = e.lngLat.lat.toFixed(6);
-    const infoElem = document.getElementById('info');
-    if (infoElem) {
-        infoElem.innerHTML = `Longitudine: <b>${lng}</b> | Latitudine: <b>${lat}</b>`;
-    }
 });
