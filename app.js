@@ -57,7 +57,7 @@ const customLayer = {
             (gltf) => {
                 const model = gltf.scene;
                 
-                // Ruota il modello internamente sul proprio asse Y di 90 gradi per "addrizzarlo"
+               
                 model.rotation.y = Math.PI / 2; 
 
                 this.scene.add(model);
