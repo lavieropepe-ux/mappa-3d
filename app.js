@@ -2,16 +2,9 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // COORDINATE: [Longitudine, Latitudine] -> San Marzano di San Giuseppe
-const modelOrigin = [17.48515, 40.47525]; 
+const modelOrigin = [17.485687, 40.474791]; 
 const modelAltitude = 0;
-
-// ROTAZIONE: Imposta l'angolo in gradi
-const degrees = 95; 
-const modelRotate = [
-    0, 
-    Math.PI / 2, 
-    degreesZ * (Math.PI / 180)
-];
+const modelRotate = [Math.P1 / 2, 0, 85];
 
 // Converti coordinate per MapLibre
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
