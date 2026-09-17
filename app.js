@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// 1. Spostamento a Ovest (Longitudine diminuita) e leggermente a Nord (Latitudine aumentata)
+// 1. Posizione del modello
 const modelOrigin = [17.48515, 40.47525]; 
 const modelAltitude = 0;
 
-// 2. Rotazione finale 
-const degrees = 0;
-const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 0)];
+// 2. Rotazione in gradi (Modifica questo valore per ruotare l'edificio)
+const degrees = 95; 
+const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)]; // Corretta la divisione per 180
 
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
     modelOrigin,
@@ -24,11 +24,11 @@ const modelTransform = {
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
-// Inizializza la mappa centrata esattamente sul nuovo punto
+// Inizializza la mappa
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-    center: modelOrigin, // La telecamera va subito sulle nuove coordinate
+    center: modelOrigin,
     zoom: 18.5,
     pitch: 60,
     bearing: -17
@@ -42,7 +42,6 @@ const customLayer = {
         this.camera = new THREE.Camera();
         this.scene = new THREE.Scene();
 
-        // Luci per illuminare il modello 3D
         const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
         directionalLight.position.set(0, -70, 100).normalize();
         this.scene.add(directionalLight);
@@ -50,7 +49,6 @@ const customLayer = {
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         this.scene.add(ambientLight);
 
-        // Caricamento file .glb specifico
         const loader = new GLTFLoader();
         loader.load(
             './models/SMarzano_3ds.glb',
@@ -59,7 +57,7 @@ const customLayer = {
             },
             undefined,
             (error) => {
-                console.error('Errore nel caricamento del file SMarzano_3ds.glb:', error);
+                console.error('Errore caricamento modello:', error);
             }
         );
         this.map = map;
@@ -113,9 +111,13 @@ const customLayer = {
 map.on('style.load', () => {
     map.addLayer(customLayer);
 });
+
 // Tracciamento coordinate al movimento del mouse
 map.on('mousemove', (e) => {
     const lng = e.lngLat.lng.toFixed(6);
     const lat = e.lngLat.lat.toFixed(6);
-    document.getElementById('info').innerHTML = `Longitudine: <b>${lng}</b> | Latitudine: <b>${lat}</b>`;
+    const infoElem = document.getElementById('info');
+    if (infoElem) {
+        infoElem.innerHTML = `Longitudine: <b>${lng}</b> | Latitudine: <b>${lat}</b>`;
+    }
 });
