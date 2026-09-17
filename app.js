@@ -1,24 +1,26 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// 1. COORDINATE PERFETTAMENTE CENTRATE SULLA SAGOMA GRIGIA [Longitudine, Latitudine]
-const modelOrigin = [17.48590, 40.47510]; 
+// 1. COORDINATE CENTRATE SULLA SAGOMA GRIGIA [Longitudine, Latitudine]
+const modelOrigin = [17.48585, 40.47512]; 
 const modelAltitude = 0;
 
-// Converti coordinate per MapLibre
+// 2. ROTAZIONE MAPPA (Gradi per l'allineamento bussola)
+const degrees = 100; 
+const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
+
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
     modelOrigin,
     modelAltitude
 );
 
-// Manteniamo la trasformazione MapLibre standard (senza rotazioni complesse qui)
 const modelTransform = {
     translateX: modelAsMercatorCoordinate.x,
     translateY: modelAsMercatorCoordinate.y,
     translateZ: modelAsMercatorCoordinate.z,
-    rotateX: Math.PI / 2,
-    rotateY: 0,
-    rotateZ: 0,
+    rotateX: modelRotate[0],
+    rotateY: modelRotate[1],
+    rotateZ: modelRotate[2],
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
@@ -32,7 +34,6 @@ const map = new maplibregl.Map({
     bearing: -17
 });
 
-// Layer 3D Three.js
 const customLayer = {
     id: '3d-model',
     type: 'custom',
@@ -42,27 +43,22 @@ const customLayer = {
         this.scene = new THREE.Scene();
 
         // Luci
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
         directionalLight.position.set(0, -70, 100).normalize();
         this.scene.add(directionalLight);
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         this.scene.add(ambientLight);
 
-        // Caricamento Modello GLB
+        // Caricamento e correzione orientamento Mesh
         const loader = new GLTFLoader();
         loader.load(
             './models/SMarzano_3ds.glb',
             (gltf) => {
                 const model = gltf.scene;
-
-                // --- ROTAZIONE DIRETTA DEL MODELLO 3D ---
-                // Ruota di 90° attorno all'asse Y per metterlo in piedi/orizzontale
-                model.rotation.y = Math.PI / 2; // (90 gradi)
-
-                // Regola questo valore per allinearlo alla sagoma sulla mappa (in gradi)
-                const angolodibussola = 10; 
-                model.rotation.z = angolodibussola * (Math.PI / 180);
+                
+                // Ruota il modello internamente sul proprio asse Y di 90 gradi per "addrizzarlo"
+                model.rotation.y = Math.PI / 2; 
 
                 this.scene.add(model);
             },
@@ -85,6 +81,14 @@ const customLayer = {
             new THREE.Vector3(1, 0, 0),
             modelTransform.rotateX
         );
+        const rotationY = new THREE.Matrix4().makeRotationAxis(
+            new THREE.Vector3(0, 1, 0),
+            modelTransform.rotateY
+        );
+        const rotationZ = new THREE.Matrix4().makeRotationAxis(
+            new THREE.Vector3(0, 0, 1),
+            modelTransform.rotateZ
+        );
 
         const m = new THREE.Matrix4().fromArray(matrix);
         const l = new THREE.Matrix4()
@@ -100,7 +104,9 @@ const customLayer = {
                     modelTransform.scale
                 )
             )
-            .multiply(rotationX);
+            .multiply(rotationX)
+            .multiply(rotationY)
+            .multiply(rotationZ);
 
         this.camera.projectionMatrix = m.multiply(l);
         this.renderer.resetState();
@@ -113,7 +119,7 @@ map.on('style.load', () => {
     map.addLayer(customLayer);
 });
 
-// Evento movimento mouse per le coordinate
+// Tracciamento coordinate al movimento del mouse
 map.on('mousemove', (e) => {
     const lng = e.lngLat.lng.toFixed(6);
     const lat = e.lngLat.lat.toFixed(6);
