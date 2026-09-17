@@ -110,3 +110,9 @@ const customLayer = {
 map.on('style.load', () => {
     map.addLayer(customLayer);
 });
+// Tracciamento coordinate al movimento del mouse
+map.on('mousemove', (e) => {
+    const lng = e.lngLat.lng.toFixed(6);
+    const lat = e.lngLat.lat.toFixed(6);
+    document.getElementById('info').innerHTML = `Longitudine: <b>${lng}</b> | Latitudine: <b>${lat}</b>`;
+});
