@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// Coordinate dove posizionare il modello (Longitudine, Latitudine)
-const modelOrigin = [16.87193, 41.12527]; // Bari
+// Coordinate di posizionamento del modello (Longitudine, Latitudine per San Marzano di San Giuseppe)
+const modelOrigin = [17.5028, 40.4556]; 
 const modelAltitude = 0;
 const modelRotate = [Math.PI / 2, 0, 0];
 
@@ -21,7 +21,7 @@ const modelTransform = {
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
-// Inizializza la mappa con stile compatibile
+// Inizializza la mappa
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
@@ -39,23 +39,24 @@ const customLayer = {
         this.camera = new THREE.Camera();
         this.scene = new THREE.Scene();
 
+        // Luci per illuminare il modello 3D
         const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
         directionalLight.position.set(0, -70, 100).normalize();
         this.scene.add(directionalLight);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         this.scene.add(ambientLight);
 
-        // Caricamento file .glb
+        // Caricamento file .glb specifico
         const loader = new GLTFLoader();
         loader.load(
-            './models/edificio.glb',
+            './models/SMarzano_3ds.glb',
             (gltf) => {
                 this.scene.add(gltf.scene);
             },
             undefined,
             (error) => {
-                console.error('Errore caricamento modello:', error);
+                console.error('Errore nel caricamento del file SMarzano_3ds.glb:', error);
             }
         );
         this.map = map;
