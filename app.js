@@ -6,7 +6,7 @@ const modelOrigin = [17.48585, 40.47512];
 const modelAltitude = 0;
 
 // 2. ROTAZIONE MAPPA (Gradi per l'allineamento bussola)
-const degrees = 90; 
+const degrees = 180; 
 const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 180)];
 
 const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
