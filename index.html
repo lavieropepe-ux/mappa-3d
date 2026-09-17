@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Mappa 3D Open Source</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    
     <!-- MapLibre CSS e JS -->
     <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
@@ -21,11 +22,12 @@
 </head>
 <body>
     <div id="map"></div>
-    <!-- Box informativo coordinate -->
+
+    <!-- Box informativo per le coordinate in tempo reale -->
     <div id="info" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 8px 12px; font-family: monospace; font-size: 13px; border-radius: 4px; z-index: 1000; pointer-events: none;">
         Sposta il mouse sulla mappa...
     </div>
-    
+
     <script type="module" src="app.js"></script>
 </body>
 </html>
