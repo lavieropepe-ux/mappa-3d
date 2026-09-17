@@ -5,7 +5,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const modelOrigin = [17.48515, 40.47525]; 
 const modelAltitude = 0;
 
-// 2. Rotazione finale (portata a 95° per perfezionare l'inclinazione lungo l'asse)
+// 2. Rotazione finale 
 const degrees = 0;
 const modelRotate = [Math.PI / 2, 0, degrees * (Math.PI / 0)];
 
