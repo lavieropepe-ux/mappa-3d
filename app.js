@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// Coordinate precise San Marzano di San Giuseppe (Longitudine, Latitudine)
-const modelOrigin = [17.5028, 40.4556]; 
+// Coordinate dove posizionare il modello (Longitudine, Latitudine)
+const modelOrigin = [16.87193, 41.12527]; // Bari
 const modelAltitude = 0;
 const modelRotate = [Math.PI / 2, 0, 0];
 
@@ -21,12 +21,12 @@ const modelTransform = {
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
-// Inizializza mappa con Zoom 18.5 (molto vicino)
+// Inizializza la mappa con stile compatibile
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
     center: modelOrigin,
-    zoom: 18.5, 
+    zoom: 17,
     pitch: 60,
     bearing: -17
 });
@@ -39,26 +39,23 @@ const customLayer = {
         this.camera = new THREE.Camera();
         this.scene = new THREE.Scene();
 
-        // Luci forte intensità per evitare che il modello appaia nero
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
         directionalLight.position.set(0, -70, 100).normalize();
         this.scene.add(directionalLight);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
         this.scene.add(ambientLight);
 
+        // Caricamento file .glb
         const loader = new GLTFLoader();
         loader.load(
-            './models/SMarzano_3ds.glb',
+            './models/edificio.glb',
             (gltf) => {
-                const model = gltf.scene;
-                // Aumentiamo la scala del modello nel caso sia stato esportato piccolo
-                model.scale.set(10, 10, 10); 
-                this.scene.add(model);
+                this.scene.add(gltf.scene);
             },
             undefined,
             (error) => {
-                console.error('Errore nel caricamento del file SMarzano_3ds.glb:', error);
+                console.error('Errore caricamento modello:', error);
             }
         );
         this.map = map;
