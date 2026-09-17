@@ -16,8 +16,8 @@ const modelTransform = {
     translateY: modelAsMercatorCoordinate.y,
     translateZ: modelAsMercatorCoordinate.z,
     rotateX: modelRotate[0],
-    rotateY: modelRotate[1],
-    rotateZ: modelRotate[2],
+    rotateY: modelRotate[0],
+    rotateZ: modelRotate[0],
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
