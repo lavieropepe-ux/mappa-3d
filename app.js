@@ -1,5 +1,8 @@
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 // Coordinate dove posizionare il modello (Longitudine, Latitudine)
-const modelOrigin = [16.87193, 41.12527]; // Esempio: Bari
+const modelOrigin = [16.87193, 41.12527]; // Bari
 const modelAltitude = 0;
 const modelRotate = [Math.PI / 2, 0, 0];
 
@@ -8,7 +11,6 @@ const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
     modelAltitude
 );
 
-// Trasformazioni 3D per orientare il modello sulla mappa
 const modelTransform = {
     translateX: modelAsMercatorCoordinate.x,
     translateY: modelAsMercatorCoordinate.y,
@@ -19,19 +21,16 @@ const modelTransform = {
     scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
 };
 
-const THREE = window.THREE;
-
-// Inizializza la mappa
+// Inizializza la mappa con stile compatibile
 const map = new maplibregl.Map({
     container: 'map',
-    style: https://basemaps.cartocdn.com/gl/positron-gl-style/style.json', // URL aggiornato e compatibile CORS
+    style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
     center: modelOrigin,
     zoom: 17,
-    pitch: 60, // Inclinazione per vista 3D
+    pitch: 60,
     bearing: -17
 });
 
-// Layer personalizzato Three.js
 const customLayer = {
     id: '3d-model',
     type: 'custom',
@@ -40,17 +39,23 @@ const customLayer = {
         this.camera = new THREE.Camera();
         this.scene = new THREE.Scene();
 
-        // Luci
-        const directionalLight = new THREE.DirectionalLight(0xffffff);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
         directionalLight.position.set(0, -70, 100).normalize();
         this.scene.add(directionalLight);
 
-        // Caricamento modello GLTF/GLB
-        const loader = new THREE.GLTFLoader();
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        this.scene.add(ambientLight);
+
+        // Caricamento file .glb
+        const loader = new GLTFLoader();
         loader.load(
-            './models/edificio.glb', // Percorso del tuo file 3D
+            './models/edificio.glb',
             (gltf) => {
                 this.scene.add(gltf.scene);
+            },
+            undefined,
+            (error) => {
+                console.error('Errore caricamento modello:', error);
             }
         );
         this.map = map;
